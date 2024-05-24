@@ -2,6 +2,7 @@ package com.example.shopapp.services.imp;
 
 import com.example.shopapp.dtos.request.CategoryCreateRequest;
 import com.example.shopapp.dtos.response.CategoryResponse;
+import com.example.shopapp.exception.ShopAppModelsNotFoundException;
 import com.example.shopapp.mapper.CategoryMapper;
 import com.example.shopapp.models.Category;
 import com.example.shopapp.repositories.CategoryRepository;
@@ -31,7 +32,7 @@ public class CategoryServiceImp implements CategoryService {
 
     @Override
     public CategoryResponse getCategoryById(long id) {
-        Category category = categoryRepository.findById(id).orElseThrow(() -> new RuntimeException("Category not found"));
+        Category category = categoryRepository.findById(id).orElseThrow(() -> new ShopAppModelsNotFoundException("Category not found"));
 
         return categoryMapper.categoryToCategoryResponse(category);
     }
@@ -45,7 +46,7 @@ public class CategoryServiceImp implements CategoryService {
 
     @Override
     public CategoryResponse updateCategory(long id, CategoryCreateRequest request) {
-        Category category = categoryRepository.findById(id).orElseThrow(() -> new RuntimeException("Category not found"));
+        Category category = categoryRepository.findById(id).orElseThrow(() -> new ShopAppModelsNotFoundException("Category not found"));
 
         categoryMapper.categoryToUpdateCategory(category, request);
 
