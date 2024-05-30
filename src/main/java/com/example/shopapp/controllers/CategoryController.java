@@ -45,6 +45,7 @@ public class CategoryController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasAnyAuthority('UPDATE_DATA')")
     EntityResponse<CategoryResponse> updateCategory(
             @PathVariable("id") Long id,
             @RequestBody CategoryCreateRequest request
@@ -56,7 +57,7 @@ public class CategoryController {
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasAnyAuthority('ROLE_USER')")
+    @PreAuthorize("hasRole('ADMIN')")
     EntityResponse<String> updateCategory(
             @PathVariable("id") Long id
     ){

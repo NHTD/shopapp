@@ -39,9 +39,8 @@ public class SecurityConfig {
         http.
                 sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(req -> req
-                        .requestMatchers("/users", "/auth/authenticate").permitAll()
-                        .requestMatchers("/categories").authenticated()
-                        .anyRequest().permitAll()
+                        .requestMatchers(HttpMethod.POST, PUBLIC_ENDPOINTS).permitAll()
+                        .anyRequest().authenticated()
                 )
                 .authenticationProvider(authenticationProvider())
                 .addFilterBefore(new JwtTokenValidator(), BasicAuthenticationFilter.class)

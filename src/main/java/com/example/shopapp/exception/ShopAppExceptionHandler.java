@@ -15,6 +15,16 @@ public class ShopAppExceptionHandler {
         return buildShopAppServerErrorResponse(HttpStatus.NOT_FOUND, exception);
     }
 
+    @ExceptionHandler(ShopAppFileTooLargeException.class)
+    ResponseEntity<ShopAppErrorStatus> handleShopAppFileTooLargeException(ShopAppFileTooLargeException exception){
+        return buildShopAppServerErrorResponse(HttpStatus.PAYLOAD_TOO_LARGE, exception);
+    }
+
+    @ExceptionHandler(ShopAppFileUnSupportedMediaTypeException.class)
+    ResponseEntity<ShopAppErrorStatus> handleShopAppFileUnSupportedMediaTypeException(ShopAppFileUnSupportedMediaTypeException exception){
+        return buildShopAppServerErrorResponse(HttpStatus.UNSUPPORTED_MEDIA_TYPE, exception);
+    }
+
     private <E extends Throwable> ResponseEntity<ShopAppErrorStatus> buildShopAppServerErrorResponse(
             HttpStatus httpStatus,
             E exception
