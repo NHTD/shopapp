@@ -1,5 +1,7 @@
 package com.example.shopapp.dtos.request;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.validation.constraints.Min;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -12,20 +14,25 @@ import java.util.Date;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class OrderUpdateRequest {
+    @JsonProperty("full_name")
     String fullName;
     String email;
+    @JsonProperty("phone_number")
     String phoneNumber;
     String address;
     LocalDateTime orderDate;
-    String status;
-    Integer totalMoney;
+    @JsonProperty("total_money")
+    @Min(value = 0, message = "Total money must be >= 0")
+    Float totalMoney;
+    @JsonProperty("shipping_method")
     String shippingMethod;
+    @JsonProperty("shipping_address")
     String shippingAddress;
+    @JsonProperty("shipping_date")
     Date shippingDate;
     String trackingNumber;
+    @JsonProperty("payment_method")
     String paymentMethod;
-    String paymentStatus;
-    String paymentDate;
-    boolean active;
+    @JsonProperty("user_id")
     Long userId;
 }

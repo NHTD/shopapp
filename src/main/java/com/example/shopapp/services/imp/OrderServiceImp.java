@@ -19,6 +19,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -62,20 +64,28 @@ public class OrderServiceImp implements OrderService {
     @Override
     public OrderResponse updateOrder(Long id, OrderUpdateRequest request) {
         Order order = orderRepository.findById(id)
+                .orElseThrow(() -> new ShopAppModelsNotFoundException("Order with id {} not found", id));
+
+        User user = userRepository.findById(request.getUserId())
                 .orElseThrow(() -> new ShopAppModelsNotFoundException("User with id {} not found", id));
 
         orderMapper.orderToUpdateOrder(order, request);
+        order.setUser(user);
 
         return orderMapper.orderToOrderResponse(orderRepository.save(order));
     }
 
     @Override
     public void deleteOrder(Long id) {
+        Optional<Order> order = orderRepository.findById(id);
+        if(order.isEmpty()){
+            throw new ShopAppModelsNotFoundException("User with id {} is not found", id);
+        }
         orderRepository.deleteById(id);
     }
 
     @Override
-    public List<OrderResponse> getOrders(Long id) {
-        return null;
+    public List<OrderResponse> getOrders() {
+        return orderRepository.findAll().stream().map(orderMapper :: orderToOrderResponse).collect(Collectors.toList());
     }
 }

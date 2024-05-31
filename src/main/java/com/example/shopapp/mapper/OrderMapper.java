@@ -13,5 +13,6 @@ public interface OrderMapper {
     @Mapping(target = "user", ignore = true)
     Order orderToOrder(OrderCreationRequest request);
     OrderResponse orderToOrderResponse(Order order);
+    @Mapping(target = "user", ignore = true)
     void orderToUpdateOrder(@MappingTarget Order order, OrderUpdateRequest request);
 }

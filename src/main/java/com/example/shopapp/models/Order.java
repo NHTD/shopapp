@@ -1,9 +1,11 @@
 package com.example.shopapp.models;
 
+import com.example.shopapp.enums.OrderStatusEnum;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Date;
 
@@ -33,10 +35,10 @@ public class Order extends AbstractModel{
     String address;
 
     @Column(name = "order_date")
-    LocalDateTime orderDate;
+    Date orderDate;
 
     @Column(name = "status")
-    String status;
+    OrderStatusEnum status;
 
     @Column(name = "total_money")
     Integer totalMoney;
