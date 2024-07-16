@@ -31,7 +31,8 @@ import java.util.Collections;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class SecurityConfig {
 
-    String[] PUBLIC_ENDPOINTS = {"/users", "/auth/authenticate"};
+    String[] POST_PUBLIC_ENDPOINTS = {"/users", "/auth/authenticate"};
+    String[] GET_PUBLIC_ENDPOINTS = {"/products/*", "/products/images/*", "/products**", "/products/images/*"};
     UserDetailServiceImp userDetailService;
 
     @Bean
@@ -39,7 +40,8 @@ public class SecurityConfig {
         http.
                 sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(req -> req
-                        .requestMatchers(HttpMethod.POST, PUBLIC_ENDPOINTS).permitAll()
+                        .requestMatchers(HttpMethod.POST, POST_PUBLIC_ENDPOINTS).permitAll()
+                        .requestMatchers(HttpMethod.GET, GET_PUBLIC_ENDPOINTS).permitAll()
                         .anyRequest().authenticated()
                 )
                 .authenticationProvider(authenticationProvider())
@@ -57,7 +59,7 @@ public class SecurityConfig {
                 CorsConfiguration cfg = new CorsConfiguration();
 
                 cfg.setAllowedOrigins(Arrays.asList(
-                        "http://localhost:3000"
+                        "http://localhost:4300"
                 ));
                 cfg.setAllowedMethods(Collections.singletonList("*"));
                 cfg.setAllowCredentials(true);

@@ -9,30 +9,32 @@ import com.example.shopapp.dtos.response.ProductListResponse;
 import com.example.shopapp.dtos.response.ProductResponse;
 import com.example.shopapp.exception.ShopAppFileTooLargeException;
 import com.example.shopapp.exception.ShopAppFileUnSupportedMediaTypeException;
+import com.example.shopapp.models.Product;
 import com.example.shopapp.services.ProductService;
 import com.github.javafaker.Faker;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.core.io.UrlResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/products")
@@ -56,7 +58,7 @@ public class ProductController {
     }
 
     @PostMapping(value = "/uploads/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    @PreAuthorize("hasAnyAuthority('UPDATE_DATA')")
+    @PreAuthorize("hasAnyAuthority('READ_DATA')")
     public EntityResponse<?> uploadImages(
             @PathVariable("id") Long productId,
             @ModelAttribute("files") List<MultipartFile> files
@@ -97,6 +99,20 @@ public class ProductController {
                 .build();
     }
 
+    @GetMapping("/images/{imageName}")
+    public ResponseEntity<?> viewImage(@PathVariable("imageName") String imageName) throws MalformedURLException {
+        Path imagePath = Paths.get("uploads/" + imageName);
+        UrlResource resource = new UrlResource(imagePath.toUri());
+
+        if(resource.exists()){
+            return ResponseEntity.ok()
+                    .contentType(MediaType.IMAGE_JPEG)
+                    .body(resource);
+        }else{
+            return ResponseEntity.notFound().build();
+        }
+    }
+
     private String storeFile(MultipartFile file) throws IOException {
         if(!isImageFile(file) || file.getOriginalFilename()==null){
             throw new ShopAppFileUnSupportedMediaTypeException("Invalid image format");
@@ -125,14 +141,16 @@ public class ProductController {
 
     @GetMapping
     EntityResponse<ProductListResponse> getProducts(
-            @RequestParam("page") int page,
-            @RequestParam("limit") int limit
+            @RequestParam(defaultValue = "") String keyword,
+            @RequestParam(defaultValue = "0", name = "category_id") Long categoryId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int limit
     ){
         PageRequest pageRequest = PageRequest.of(
                 page, limit,
-                Sort.by("createdAt").descending()
+                Sort.by("id").ascending()
         );
-        Page<ProductResponse> productPage = productService.getProducts(pageRequest);
+        Page<ProductResponse> productPage = productService.getProducts(pageRequest, categoryId, keyword);
         int totalPages = productPage.getTotalPages();
         List<ProductResponse> products = productPage.getContent();
 
@@ -185,6 +203,20 @@ public class ProductController {
             productService.createProduct(request);
         }
         return EntityResponse.<String>builder().status(true).body("Create successfully");
+    }
+
+    @GetMapping("/by-ids")
+    public EntityResponse<List<Product>> getProductByIds(@RequestParam("ids") String ids){
+        List<Long> productIds = Arrays.stream(ids.split(","))
+                .map(Long::parseLong)
+                .collect(Collectors.toList());
+
+        List<Product> products = productService.findProductByIds(productIds);
+        return EntityResponse.<List<Product>>builder()
+                .status(true)
+                .body(products)
+                .build();
+
     }
 
 }

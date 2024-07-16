@@ -1,6 +1,5 @@
 package com.example.shopapp.exception;
 
-import com.example.shopapp.dtos.response.EntityResponse;
 import com.example.shopapp.utils.ShopAppRestApiResponseUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,6 +22,11 @@ public class ShopAppExceptionHandler {
     @ExceptionHandler(ShopAppFileUnSupportedMediaTypeException.class)
     ResponseEntity<ShopAppErrorStatus> handleShopAppFileUnSupportedMediaTypeException(ShopAppFileUnSupportedMediaTypeException exception){
         return buildShopAppServerErrorResponse(HttpStatus.UNSUPPORTED_MEDIA_TYPE, exception);
+    }
+
+    @ExceptionHandler(ShopAppInvalidDataException.class)
+    ResponseEntity<ShopAppErrorStatus> handleShopAppForbidden(ShopAppInvalidDataException exception){
+        return buildShopAppServerErrorResponse(HttpStatus.FORBIDDEN, exception);
     }
 
     private <E extends Throwable> ResponseEntity<ShopAppErrorStatus> buildShopAppServerErrorResponse(

@@ -8,7 +8,7 @@ import lombok.experimental.FieldDefaults;
 @Data
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class EntityResponse <T>{
+public class EntityResponse<T>{
     boolean status;
     T body;
 }

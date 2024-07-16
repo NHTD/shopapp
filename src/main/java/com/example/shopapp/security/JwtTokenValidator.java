@@ -1,5 +1,6 @@
 package com.example.shopapp.security;
 
+import com.example.shopapp.exception.ShopAppForbiddenException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
@@ -41,7 +42,7 @@ public class JwtTokenValidator extends OncePerRequestFilter {
                 Authentication authentication = new UsernamePasswordAuthenticationToken(phoneNumber, null, auth);
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }catch (Exception ex){
-                throw new BadCredentialsException("Invalid token");
+                throw new ShopAppForbiddenException("Invalid token");
             }
         }
         filterChain.doFilter(request, response);

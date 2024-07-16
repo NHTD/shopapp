@@ -1,6 +1,7 @@
 package com.example.shopapp.models;
 
 import com.example.shopapp.enums.OrderStatusEnum;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -8,6 +9,7 @@ import lombok.experimental.FieldDefaults;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Data
@@ -41,7 +43,7 @@ public class Order extends AbstractModel{
     OrderStatusEnum status;
 
     @Column(name = "total_money")
-    Integer totalMoney;
+    Float totalMoney;
 
     @Column(name = "shipping_method")
     String shippingMethod;
@@ -67,4 +69,7 @@ public class Order extends AbstractModel{
     @Column(name = "active")
     boolean active;
 
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonManagedReference
+    List<OrderDetail> orderDetails;
 }

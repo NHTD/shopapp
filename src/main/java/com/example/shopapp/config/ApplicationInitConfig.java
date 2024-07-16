@@ -31,7 +31,7 @@ public class ApplicationInitConfig {
                 roles.add(Role.ADMIN.name());
 
                 User user = User.builder()
-                        .name("admin")
+                        .fullName("admin")
                         .phoneNumber("0901234567")
                         .password(passwordEncoder.encode("admin"))
 //                        .roles(roles)

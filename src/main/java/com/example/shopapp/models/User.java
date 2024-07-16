@@ -3,17 +3,21 @@ package com.example.shopapp.models;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import org.hibernate.Hibernate;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.time.LocalDate;
 import java.util.Collection;
-import java.util.Date;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 @Entity
 @Data
+@ToString
+@RequiredArgsConstructor
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
@@ -21,7 +25,7 @@ import java.util.stream.Collectors;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class User extends AbstractAuditingModel implements UserDetails {
 
-    @Column(name = "name", length = 350, nullable = false)
+    @Column(name = "name", length = 100)
     String name;
 
     @Column(name = "full_name", length = 100)
@@ -30,13 +34,19 @@ public class User extends AbstractAuditingModel implements UserDetails {
     @Column(name = "phone_number", length = 11, nullable = false)
     String phoneNumber;
 
-    @Column(name = "address", length = 200, nullable = false)
+    @Column(name = "password", length = 200, nullable = false)
     String password;
+
+    @Column(name = "retype_password", length = 200, nullable = false)
+    String retypePassword;
+
+    @Column(name = "address", length = 200, nullable = false)
+    String address;
 
     boolean active;
 
     @Column(name = "date_of_birth")
-    Date dateOfBirth;
+    LocalDate dateOfBirth;
 
     @Column(name = "facebook_account_id")
     int facebookAccountId;
@@ -45,6 +55,7 @@ public class User extends AbstractAuditingModel implements UserDetails {
     int googleAccountId;
 
     @ManyToMany
+    @ToString.Exclude
     Set<Role> roles;
 
     @Override
@@ -87,5 +98,18 @@ public class User extends AbstractAuditingModel implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
+        User user = (User) o;
+        return getId() != null && Objects.equals(getId(), user.getId());
+    }
+
+    @Override
+    public int hashCode() {
+        return getClass().hashCode();
     }
 }

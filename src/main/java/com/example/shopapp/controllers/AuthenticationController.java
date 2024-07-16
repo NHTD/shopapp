@@ -4,6 +4,7 @@ import com.example.shopapp.dtos.request.AuthenticationRequest;
 import com.example.shopapp.dtos.response.AuthenticationResponse;
 import com.example.shopapp.dtos.response.EntityResponse;
 import com.example.shopapp.services.AuthenticationService;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -21,11 +22,12 @@ public class AuthenticationController {
     AuthenticationService authenticationService;
 
     @PostMapping("/authenticate")
-    EntityResponse<AuthenticationResponse> authenticate(@RequestBody AuthenticationRequest request){
+    EntityResponse<AuthenticationResponse> authenticate(
+            @RequestBody AuthenticationRequest request
+    ){
         return EntityResponse.<AuthenticationResponse>builder()
                 .status(true)
                 .body(authenticationService.authenticate(request))
                 .build();
     }
-
 }

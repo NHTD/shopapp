@@ -27,7 +27,7 @@ public class UserDetailServiceImp implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = userRepository.findByPhoneNumber(username)
-                .orElseThrow(() -> new ShopAppModelsNotFoundException("User not found with phone number " + username));
+                .orElseThrow(() -> new ShopAppModelsNotFoundException("User not found with phone number {}", username));
 
         List<GrantedAuthority> authorities = user.getRoles().stream()
                 .flatMap(role -> {

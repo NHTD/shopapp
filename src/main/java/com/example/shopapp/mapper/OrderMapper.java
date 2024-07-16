@@ -10,9 +10,12 @@ import org.mapstruct.MappingTarget;
 
 @Mapper(componentModel = "spring")
 public interface OrderMapper {
+    @Mapping(source = "totalMoney", target = "totalMoney")
     @Mapping(target = "user", ignore = true)
+    @Mapping(target = "orderDetails", ignore = true)
     Order orderToOrder(OrderCreationRequest request);
     OrderResponse orderToOrderResponse(Order order);
+    @Mapping(source = "totalMoney", target = "totalMoney")
     @Mapping(target = "user", ignore = true)
     void orderToUpdateOrder(@MappingTarget Order order, OrderUpdateRequest request);
 }

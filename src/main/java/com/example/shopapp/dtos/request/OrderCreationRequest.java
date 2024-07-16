@@ -7,6 +7,7 @@ import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDateTime;
 import java.util.Date;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -35,4 +36,7 @@ public class OrderCreationRequest {
     String paymentMethod;
     @JsonProperty("user_id")
     Long userId;
+    @JsonProperty("cart_items")
+    private List<CartItemRequest> cartItems;
+    String status;
 }

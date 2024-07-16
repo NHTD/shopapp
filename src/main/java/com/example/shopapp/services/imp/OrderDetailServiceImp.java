@@ -76,7 +76,7 @@ public class OrderDetailServiceImp implements OrderDetailService {
     @Override
     public void deleteOrderDetail(Long id) {
         Optional<OrderDetail> orderDetail = orderDetailRepository.findById(id);
-        if(orderDetail.isEmpty()){
+        if(!orderDetail.isPresent()){
             throw new ShopAppModelsNotFoundException("Order details with id {} is not found", id);
         }
         orderDetailRepository.deleteById(id);

@@ -21,8 +21,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -53,12 +55,16 @@ public class ProductServiceImp implements ProductService {
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> new ShopAppModelsNotFoundException("Product with id {} is not existed", id));
 
+        List<ProductImage> productImage = productImageRepository.findByProductId(id);
+        product.setProductImages(productImage);
+
         return productMapper.productToProductResponse(product);
     }
 
     @Override
-    public Page<ProductResponse> getProducts(PageRequest pageRequest) {
-        return productRepository.findAll(pageRequest).map(productMapper::productToProductResponse);
+    public Page<ProductResponse> getProducts(PageRequest pageRequest, Long categoryId, String keyword) {
+        Page<Product> productPage = productRepository.searchProducts(categoryId, keyword, pageRequest);
+        return productPage.map(productMapper::productToProductResponse);
     }
 
     @Override
@@ -102,5 +108,10 @@ public class ProductServiceImp implements ProductService {
         }
 
         return productImageMapper.productImageToProductImageResponse(productImageRepository.save(productImage));
+    }
+
+    @Override
+    public List<Product> findProductByIds(List<Long> productIds) {
+        return productRepository.findProductByIds(productIds);
     }
 }
